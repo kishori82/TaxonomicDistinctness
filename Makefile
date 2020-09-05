@@ -1,6 +1,6 @@
 IDIR =../libStatGen/include
 
-CC = g++ -std=c++11
+CC = g++ -std=c++11 -Wall
 CFLAGS =  
 
 ODIR=obj

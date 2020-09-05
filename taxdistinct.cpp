@@ -1,24 +1,25 @@
 #include "utilities.h"
-
+#include <cinttypes>
 using namespace std;
 
 void insert_node(NODE **node, const vector<std::string> &tax_hierarchy, unsigned int depth) {
     NODE *n;
-    if(*node == nullptr) {
-       *node  = new NODE;
-       (*node)->name = tax_hierarchy[depth];
-    }
-    if(tax_hierarchy.size() == 1 ) (*node)->count++;
 
-    if( tax_hierarchy.size() > depth + 1 ) {
+    if (*node == nullptr) {
+      *node  = new NODE;
+      (*node)->name = tax_hierarchy[depth];
+    }
+    if (tax_hierarchy.size() == 1 ) (*node)->count++;
+
+    if (tax_hierarchy.size() > depth + 1 ) {
        depth = depth + 1;
-       if( (*node)->children.find(tax_hierarchy[depth]) == (*node)->children.end() ) {
-          n = new NODE;
-          n->name = tax_hierarchy[depth];
-          (*node)->children.insert( {tax_hierarchy[depth], n }) ;
+       if ((*node)->children.find(tax_hierarchy[depth]) == (*node)->children.end() ) {
+         n = new NODE;
+         n->name = tax_hierarchy[depth];
+         (*node)->children.insert( {tax_hierarchy[depth], n }) ;
             //   std::cout <<  "\t" << n->name << " : " << depth << std::endl;
        } else {
-          n = (*node)->children.at(tax_hierarchy[depth]);
+         n = (*node)->children.at(tax_hierarchy[depth]);
        }
 
        if( tax_hierarchy.size() == depth + 1 ) n->count++;
@@ -30,11 +31,10 @@ void insert_node(NODE **node, const vector<std::string> &tax_hierarchy, unsigned
 
 void _sum_tree_count_(NODE *node, int &sum) {
    sum = sum + node->count;
-   for(auto it = node->children.begin(); it != node->children.end(); it++) {
+   for (auto it = node->children.begin(); it != node->children.end(); it++) {
       _sum_tree_count_(it->second, sum);
    }
 }
-
 
 int sum_tree_count(NODE *node) {
    int sum = 0;
@@ -45,8 +45,9 @@ int sum_tree_count(NODE *node) {
 
 int subtree_count(NODE *node) {
    int sum = node->count;
-   for(auto it = node->children.begin(); it != node->children.end(); it++) {
-      sum = sum + subtree_count(it->second);
+
+   for (auto it = node->children.begin(); it != node->children.end(); it++) {
+     sum = sum + subtree_count(it->second);
    }
    node->subtree_count = sum;
 
@@ -56,8 +57,8 @@ int subtree_count(NODE *node) {
 
 int _count_edge_crossings_(NODE *node, const int tot_count) {
    int sum = 0;
-   for(auto it = node->children.begin(); it != node->children.end(); it++) {
-      sum = (tot_count - it->second->subtree_count)* it->second->subtree_count + _count_edge_crossings_(it->second, tot_count);
+   for (auto it = node->children.begin(); it != node->children.end(); it++) {
+     sum = (tot_count - it->second->subtree_count)* it->second->subtree_count + _count_edge_crossings_(it->second, tot_count);
    }
 
    return sum;
@@ -66,18 +67,17 @@ int _count_edge_crossings_(NODE *node, const int tot_count) {
 
 void _get_count_vector(NODE *node, vector<int> &count_vector) {
 
-   if( node->count > 0) {
+   if (node->count > 0) {
       count_vector.push_back(node->count);
    }
 
-   for(auto it = node->children.begin(); it != node->children.end(); it++) {
+   for (auto it = node->children.begin(); it != node->children.end(); it++) {
       _get_count_vector(it->second, count_vector);
    }
 }
 
 
 double compute_delta_star(NODE *node) {
-
    int tot_count = node->subtree_count;
    int prod_count = _count_edge_crossings_(node, tot_count);
 
@@ -85,8 +85,8 @@ double compute_delta_star(NODE *node) {
    _get_count_vector(node, count_vector);
 
    int sum_product = 0;
-   for(int i = 0;  i < count_vector.size(); i++) {
-      for(int j = i+1;  j < count_vector.size(); j++) {
+   for (uint32_t i = 0;  i < count_vector.size(); i++) {
+      for (uint32_t j = i+1;  j < count_vector.size(); j++) {
          sum_product +=  count_vector[i]*count_vector[j];
       }
    }
@@ -100,12 +100,12 @@ double compute_delta_star(NODE *node) {
 void _print_tree_(NODE *node, std::vector<std::string> &taxons) {
 
    taxons.push_back(node->name);
-   if( node->count >= 0 ) {
+   if (node->count >= 0) {
    //   std::cout << "\t<" << taxon_concat(taxons) << ">\t" << node->count << std::endl;
      // std::cout <<  taxon <<  std::endl;
    }
 
-   for(auto it = node->children.begin(); it != node->children.end(); it++) {
+   for (auto it = node->children.begin(); it != node->children.end(); it++) {
       _print_tree_(it->second, taxons);
    }
    taxons.pop_back();
@@ -134,15 +134,15 @@ NODE *read_tax_file(const string &tax_file_name) {
    int k = 0;
    if (newfile.is_open()){   //checking whether the file is open
       string tp;
-      while(getline(newfile, tp)){ //read data from file object and put it into string.
+      while (getline(newfile, tp)){ //read data from file object and put it into string.
        //  cout << tp << "\n"; //print the data of the string
          taxstring = split(tp, '\t');
-         if( taxstring.size() >= 10 ) {
+         if (taxstring.size() >= 10) {
               regex_search(taxstring[8], sm,  root_regex_patt);
-              if( sm.size() > 0 ) { 
+              if (sm.size() > 0) { 
 
                  std::string taxon = regex_replace(taxstring[8], count_regex_patt, "");
-                 if( sm.size() >= 0) {
+                 if(sm.size() >= 0) {
                     /*
                      for(auto x: split(trim(taxon, " "), ';') ) {
                          std::cout << '\t' << "<" <<  x << ">" << std::endl;

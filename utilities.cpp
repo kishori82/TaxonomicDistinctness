@@ -19,7 +19,7 @@ vector<string> split(const string& input, const char delim) {
     std::istringstream ss(input);
     std::string token;
 
-    while(std::getline(ss, token, delim)) {
+    while (std::getline(ss, token, delim)) {
        result.push_back(token);
     }
     return result;
@@ -28,7 +28,7 @@ vector<string> split(const string& input, const char delim) {
 
 std::string taxon_concat(const std::vector<std::string> &taxons) {
     std::string taxon;
-    for(auto it = taxons.begin(); it != taxons.end(); it++) {
+    for (auto it = taxons.begin(); it != taxons.end(); it++) {
         taxon += *it + ";";
     }
     return taxon;
@@ -66,40 +66,38 @@ void read_options(int argc, char **argv, INPUT_OPTIONS &options) {
       if (c == -1)
         break;
 
-      switch (c)
-        {
+      switch (c) {
         case 0:
           /* If this option set a flag, do nothing else now. */
-            if (long_options[option_index].flag != 0)
-                break;
+          if (long_options[option_index].flag != 0) {
             printf ("option %s", long_options[option_index].name);
-            if (optarg)
-                printf (" with arg %s", optarg);
+            if (optarg) printf (" with arg %s", optarg);
             printf ("\n");
-            break;
+           }
+           break;
         case 'f':
-            options.tax_file_name = std::string(optarg); 
-            break;
+          options.tax_file_name = std::string(optarg); 
+          break;
         case '?':
         case 'h':
           i = 0;
           printf("Usage: %s [options] \n", argv[0]);
-          while(long_options[i].name != 0) {
-             printf("\t--%-20s  %-25s  %-35s\n", long_options[i].name, \
-                     long_options[i].has_arg==no_argument? "no argument" : "required_argument", \
-                     help_messages[i]
-                   );
-             i = i + 1;
+          while (long_options[i].name != 0) {
+            printf("\t--%-20s  %-25s  %-35s\n", long_options[i].name, \
+                   long_options[i].has_arg==no_argument? "no argument" : "required_argument", \
+                   help_messages[i]
+                  );
+            i = i + 1;
           }
           /* getopt_long already printed an error message. */
           return;
           break;
         default:
-          abort ();
+          abort();
         }
     }
 
-  if( options.tax_file_name == std::string("") )  {
+  if (options.tax_file_name == std::string(""))  {
      printf("Must specify at least one taxonomic file\n");
      exit(0);
   }
@@ -107,5 +105,4 @@ void read_options(int argc, char **argv, INPUT_OPTIONS &options) {
   if (verbose_flag) {
        std::cout << "Tax files" <<  options.tax_file_name <<  std::endl;
   }
-
 }
